@@ -7,8 +7,16 @@ Configuration Facile et simple
 - F7 
 - Whitlist Admin Discord
 
-## Config.lua :
+## Server.cfg
+
+Ajouter c'est autorisation dans le votre .cfg
 ```
+add_ace resource.rd_adminmenu command.start allow
+add_ace resource.rd_adminmenu command.stop  allow
+```
+
+## Config.lua :
+
 Config = {
     OpenKey = 'F7',
     Command = 'adminmenu'
