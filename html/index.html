@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin-BossMenu</title>
+
+  <!-- police & style -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="panel" class="card hidden">
+    <h1>Admin-Menu</h1>
+
+    <!-- ➊ bouton pour créer un job -->
+    <button id="btnCreateJob" class="btn">+ Nouveau job</button>
+
+    <!-- ➋ liste des jobs -->
+    <table id="jobTable"></table>
+
+    <!-- ➌ fermer -->
+    <button id="btnClose" class="btn" style="background:#e11d48;margin-top:16px">Fermer</button>
+  </div>
+
+  <!-- ---------- Modal ---------- -->
+  <div id="modal" class="modal hidden">
+    <div>
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+
+      <div class="modal-actions">
+        <button id="modalOk">Valider</button>
+        <button id="modalCancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
