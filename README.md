@@ -17,13 +17,14 @@ add_ace resource.rd_adminmenu command.stop  allow
 ```
 
 ## Config.lua :
-
+```
 Config = {
     OpenKey = 'F7',
     Command = 'adminmenu'
 }
 ```
 ## sqladminmenu.sql :
+
 ```
 /* -----------------------------------------------------------------
    1) Table whitelist des admins Discord
