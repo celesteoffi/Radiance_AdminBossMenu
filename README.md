@@ -10,6 +10,7 @@ Configuration Facile et simple
 ## Server.cfg
 
 Ajouter c'est autorisation dans le votre .cfg
+On redemare le bossmenu pour une meilleur prise en charge
 ```
 add_ace resource.rd_adminmenu command.start allow
 add_ace resource.rd_adminmenu command.stop  allow
