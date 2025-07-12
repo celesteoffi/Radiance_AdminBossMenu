@@ -70,3 +70,8 @@ window.addEventListener('keydown',e=>{
     else { reset(); NUI('close'); }
   }
 });
+
+/* --- rafraîchissement après création --- */
+window.addEventListener('message', e=>{
+  if(e.data.action==='refresh'){ drawJobs(e.data.jobs); }  // jobs mis à jour
+});

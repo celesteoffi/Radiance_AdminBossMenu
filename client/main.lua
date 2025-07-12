@@ -1,47 +1,73 @@
-local ESX; CreateThread(function()
+--============================================================--
+-- Admin-Menu  (client)  v1.1                                 --
+--============================================================--
+
+local ESX
+CreateThread(function()
   if pcall(function() ESX = exports['es_extended']:getSharedObject() end) and ESX then return end
-  while not ESX do TriggerEvent('esx:getSharedObject', function(o) ESX=o end) Wait(50) end
+  while ESX==nil do TriggerEvent('esx:getSharedObject', function(o) ESX=o end) Wait(50) end
 end)
 
-local open=false
-RegisterCommand(Config.Command,function() toggle() end,false)
-RegisterKeyMapping(Config.Command,'Ouvrir Admin-menu','keyboard',Config.OpenKey)
+local isOpen = false
 
-function toggle()
-  if open then closeMenu() else
-    ESX.TriggerServerCallback('adminmenu:canOpen',function(ok)
-      if ok then openMenu() else ESX.ShowNotification('~r~Accès refusé.') end
-    end)
-  end
+---------------------------------------------------------------
+--  UI helpers                                                --
+---------------------------------------------------------------
+local function openUI(list)
+  SetNuiFocus(true,true)
+  SendNUIMessage({action='open',jobs=list})
+  isOpen = true
 end
-
-function openMenu()
-  ESX.TriggerServerCallback('adminmenu:getJobs',function(list)
-    SetNuiFocus(true,true)
-    SendNUIMessage({action='open',jobs=list})
-    open=true
-  end)
-end
-function closeMenu()
-  open=false
+local function closeUI()
+  if not isOpen then return end
+  isOpen=false
   SetNuiFocus(false,false)
   SendNUIMessage({action='close'})
 end
+RegisterNUICallback('close',function(_,cb) closeUI() cb('ok') end)
 
--- NUI callbacks
-RegisterNUICallback('close',function(_,cb) closeMenu();cb('ok') end)
-RegisterNUICallback('createJob',function(d,cb) TriggerServerEvent('adminmenu:createJob',d);cb('ok') end)
+---------------------------------------------------------------
+--  Ouverture (F7 ou /adminmenu)                              --
+---------------------------------------------------------------
+RegisterCommand('adminmenu',function()
+  if isOpen then closeUI()
+  else
+    ESX.TriggerServerCallback('adminmenu:canOpen',function(ok)
+      if not ok then ESX.ShowNotification('~r~Accès refusé') return end
+      ESX.TriggerServerCallback('adminmenu:getJobs',function(list) openUI(list) end)
+    end)
+  end
+end,false)
+RegisterKeyMapping('adminmenu','Ouvrir Admin-Menu','keyboard','F7')
+
+---------------------------------------------------------------
+--  NUI → serveur                                             --
+---------------------------------------------------------------
+RegisterNUICallback('createJob',function(d,cb)
+  TriggerServerEvent('adminmenu:createJob',d)
+  cb('ok')
+end)
 RegisterNUICallback('openJobBoss',function(job,cb)
-  closeMenu()
-  -- ouvre le bossmenu normal (F6) mais en envoyant une event custom
+  closeUI()
   TriggerEvent('bossmenu:forceOpenForJob',job)
   cb('ok')
 end)
 
--- ESC côté jeu
+---------------------------------------------------------------
+--  MàJ reçue du serveur                                      --
+---------------------------------------------------------------
+RegisterNetEvent('adminmenu:updateJobs',function(list)
+  if isOpen then
+    SendNUIMessage({action='refresh',jobs=list})
+  end
+end)
+
+---------------------------------------------------------------
+--  ESC pour fermer                                           --
+---------------------------------------------------------------
 CreateThread(function()
   while true do
-    if open and not IsNuiFocused() and IsControlJustReleased(0,322) then closeMenu() end
+    if isOpen and not IsNuiFocused() and IsControlJustReleased(0,322) then closeUI() end
     Wait(0)
   end
 end)
